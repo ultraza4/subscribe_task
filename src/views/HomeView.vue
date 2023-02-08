@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <button @click="setShow">Click for pop up</button>
+  <PopUpSubs v-if="show" @setShow="setShow"/>
 </template>
 
+
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import PopUpSubs from '@/components/PopUpSubs.vue';
 
 export default {
-  name: 'HomeView',
+  data() {
+    return {
+      show: false
+    }
+  },
   components: {
-    HelloWorld
+    PopUpSubs
+  },
+
+  methods: {
+    setShow() {
+      return this.show = this.show ? false : true
+    }
   }
 }
 </script>
