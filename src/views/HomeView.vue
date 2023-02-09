@@ -1,6 +1,8 @@
 <template>
-  <button @click="setShow">Click for pop up</button>
-  <PopUpSubs v-if="show" @setShow="setShow"/>
+  <div class="home">
+    <button @click="setShow">Click for pop up</button>
+    <PopUpSubs v-if="show" @setShow="setShow"/>
+  </div>
 </template>
 
 
@@ -24,3 +26,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.home {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+
+  button {
+    font-size: 24px;
+    padding: 15px;
+  }
+}
+
+</style>

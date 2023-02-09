@@ -19,34 +19,88 @@
                     Subscrive to recieve 10% off promocode plus exclusive offers and deals
                 </div>
             </header>
+            <Alert 
+                :alertType="alert.type" 
+                v-if="alert.state"
+                @closeAlert="closeAlert"
+                />
             <div class="form">
                 <div class="input-wrapper">
                     <span class="form-title">Email-adress</span>
-                    <input class="input" type="text">
+                    <input class="input" type="email" v-model="email">
                 </div>
-                <button class="form-btn">
+                <button 
+                    :disabled="!checkPrivacy" 
+                    :class="{disabledBtn: !checkPrivacy}" 
+                    class="form-btn" 
+                    @click="subscribeUser">
                     <span>Subscribe!</span>
                 </button>
                 <div class="checkbox-wrapper">
-                    <input type="checkbox">
+                    <input type="checkbox" v-model="checkPrivacy">
                     <span>I'm agree with privacy policy</span>
                 </div>
             </div>
-            <!-- <div class="bg-picture"></div> -->
-            <!-- <button @click="$emit('setShow')">close</button> -->
+            <Icon icon="ph:x" class="close-btn" @click="$emit('setShow')"/>
         </div>
     </div>
 </template>
 
 <script>
-export default {
-    emits: ["setShow"]
+import { Icon } from '@iconify/vue';
+import Alert from '@/components/alertMsg.vue';
 
+export default {
+    emits: ["setShow"],
+    components: {
+        Icon,
+        Alert
+    },
+    data() {
+        return {
+            email: '',
+            emails: [],
+            checkPrivacy: false,
+            alert: {
+                state: false,
+                type: ''
+            }
+        }
+    },
+    methods: {
+        subscribeUser() {
+            if(localStorage.getItem('emails')){
+                if(localStorage.getItem('emails').includes(this.email.toLowerCase())){
+                    this.alert.state = true;
+                    this.alert.type = 'error';
+                }else{
+                    this.emails.push(this.email.toLowerCase());
+                    localStorage.setItem('emails',JSON.stringify(this.emails));
+                    this.alert.state = true;
+                    this.alert.type = 'success';
+                }
+            }else{
+                this.emails.push(this.email.toLowerCase());
+                localStorage.setItem('emails',JSON.stringify(this.emails));
+                this.alert.state = true;
+                this.alert.type = 'success';
+            }
+        },
+        closeAlert() {
+            this.alert.state = false;
+        },
+        setEmails() {
+            this.emails = localStorage.getItem('emails') ? JSON.parse(localStorage.getItem('emails')) : []
+        }
+    },
+    mounted() {
+        this.setEmails()
+    }
 }
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $grey1: #2F3639;
 $grey3: #595E61;
 $grey4: #828688;
@@ -192,6 +246,7 @@ $purple1: #C24DFE;
                     flex: none;
                     order: 0;
                     flex-grow: 0;
+                    padding: 5px;
                 }
             }
 
@@ -228,6 +283,11 @@ $purple1: #C24DFE;
                 }
             }
 
+            .disabledBtn{
+                opacity: 0.5;
+                cursor: default;
+            }
+
             .checkbox-wrapper {
                 display: flex;
                 flex-direction: row;
@@ -239,7 +299,7 @@ $purple1: #C24DFE;
                 flex: none;
                 order: 2;
                 flex-grow: 0;
-
+                
                 input[type="checkbox"] {
                     appearance: none;
                     background-color: #fff;
@@ -249,6 +309,7 @@ $purple1: #C24DFE;
                     height: 16px;
                     border: 2px solid $purple1;
                     border-radius: 4px;
+                    cursor: pointer;
 
                     flex: none;
                     order: 0;
@@ -340,6 +401,12 @@ $purple1: #C24DFE;
                 z-index: 100;
             }
         
+        }
+        .close-btn{
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
         }
     }
 }
